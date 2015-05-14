@@ -13,7 +13,9 @@
 
         //绑定上传事件
         self.$el.addEventListener("change", function() {
-            sendFile(this.files[0], _callback);
+            if(!this.files.length) return;
+            var imageType = /image.*/;
+            this.files[0].type.match(imageType) ? sendFile(this.files[0], _callback) : alert("请上传图片")
         }, false);
 
         //生成表单元素
@@ -125,11 +127,13 @@
         var fd = new FormData();
 
         xhr.open("POST", uri, true);
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200 && callback) {
                 callback(xhr.responseText);
             }
         };
+
         fd.append('myFile', file);
         xhr.send(fd);
     }
