@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+;(function(window,document){
     function ImgUpload($el) {
         this.$el = $el;
         this.$preview = null;
@@ -27,18 +27,18 @@ define(function(require, exports, module) {
 
         //生成上传按钮
         if(!self.$btn){
-        	var $btn=Cele("div");
-        	$btn.className="imgupload-btn";
-        	$btn.innerHTML="上传图片";
-        	self.$btn=$btn;
-        	insertAfter(self.$btn,self.$el);
-        	self.$el.style.display="none";
+            var $btn=Cele("div");
+            $btn.className="imgupload-btn";
+            $btn.innerHTML="上传图片";
+            self.$btn=$btn;
+            insertAfter(self.$btn,self.$el);
+            self.$el.style.display="none";
         }
 
         //上传按钮触发上传事件
         self.$btn.addEventListener("click",function(e){
-        	self.$el.click();
-        	e.preventDefault();
+            self.$el.click();
+            e.preventDefault();
         },false);
 
         //上传完成后的回调
@@ -61,16 +61,16 @@ define(function(require, exports, module) {
             self.$preview = $ul;
 
             $ul.addEventListener("click",function(e){
-            	var nodeListArr=Array.prototype.slice.call(S("li",$ul),0),
-            		targetEle=e.target;
+                var nodeListArr=Array.prototype.slice.call(S("li",$ul),0),
+                    targetEle=e.target;
 
-            	nodeListArr.forEach(function(item,index){
-            		if(targetEle==item){
-            			$ul.removeChild(item);
-            			self.uploaded.splice(index,1);
-            			self.updateDataset();
-            		}
-            	});
+                nodeListArr.forEach(function(item,index){
+                    if(targetEle==item){
+                        $ul.removeChild(item);
+                        self.uploaded.splice(index,1);
+                        self.updateDataset();
+                    }
+                });
             },false)
 
             insertAfter(self.$preview, self.$el.nextSibling)
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 
         //增加图片url到需要上传的表单元素中
         self.uploaded.push(imgurl);
-		//更新需要上传的表单元素的url值
+        //更新需要上传的表单元素的url值
         self.updateDataset();
     }
 
@@ -139,4 +139,11 @@ define(function(require, exports, module) {
     for (var i = 0, len = $uploads.length; i < len; i++) {
         new ImgUpload($uploads[i]);
     }
-});
+
+    // CommonJS
+    if ( typeof module === "object" && typeof module.exports === "object" ) {
+        module.exports = ImgUpload;
+    } else {
+        window.ImgUpload = ImgUpload;
+    }
+})(window,document);
