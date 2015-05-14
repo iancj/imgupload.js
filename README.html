@@ -1015,23 +1015,32 @@ body .markdown-body
   }
 }
 </style><title>README</title></head><body><article class="markdown-body"><h1 id="imguploadjs"><a name="user-content-imguploadjs" href="#imguploadjs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>imgupload.js</h1>
-<p>图片上传插件</p>
+<p>图片上传组件</p>
 <h3 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>使用方法</h3>
 <pre><code>//引入样式文件
 &lt;link rel=&quot;stylesheet&quot; href=&quot;/appadmin/css/in/imgupload.css&quot;&gt;
+</code></pre>
 
-//use
-&lt;script&gt;
-seajs.use('src/imgupload.js')
+<pre><code>&lt;script&gt;
+//使用router调用模块或者在模块中require
+seajs.use('/appadmin/js/router', function(router) {
+    router.load('in/imgupload');
+});
 &lt;/script&gt;
 </code></pre>
 
-<h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>配置上传图片接口：</h3>
-<p>以页面埋点的形式配置：<br />
+<p>配置图片上传接口：<br />
 <pre><code>&lt;input type=&quot;hidden&quot; id=&quot;j-imguploadUrl&quot; value=&quot;/imgupload/upload.php&quot;&gt;
 </code></pre></p>
-<h3 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>实例化：</h3>
-<pre><code>&lt;input type=&quot;file&quot; data-name=&quot;upload1&quot; class=&quot;j-imgupload&quot;&gt;
-</code></pre>
-
-<p>表单元素name将以<code>data-name='*'</code>的形式设置，并且带上class=&rdquo;j-imgupload&rdquo;,插件会自动实例化</p></article></body></html>
+<p>自动实例化：<br />
+<pre><code>//元素name请以`data-name='*'`的方式设置，带上class=&quot;j-imgupload&quot;会自动实例化上传组件
+&lt;input type=&quot;file&quot; data-name=&quot;upload1&quot; class=&quot;j-imgupload&quot;&gt;
+</code></pre></p>
+<p>获得图片地址：<br />
+<pre><code>//上传组件将会自动生成一个隐藏域用来放置已经上传的图片地址，多个地址用英文逗号隔开
+&lt;input type=&quot;hidden&quot; name=&quot;upload1&quot; value=&quot;/imgupload/uploads/1.jpg,/imgupload/uploads/2.jpg,/imgupload/uploads/3.jpg&quot;&gt;
+</code></pre></p>
+<h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>暴露的接口：</h3>
+<pre><code>var ele=document.querySelector(&quot;#inputfile&quot;);
+var imgupload=new ImgUpload(ele);
+</code></pre></article></body></html>
