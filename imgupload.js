@@ -1,10 +1,11 @@
 ;(function(window,document){
-    function ImgUpload($el) {
+    function ImgUpload($el,uploadUrl) {
         this.$el = $el;
         this.$preview = null;
         this.$dataset = null;
         this.$btn=null;
         this.uploaded = [];
+        this.uploadUrl = uploadUrl || "/";
         this.init();
     }
 
@@ -14,8 +15,17 @@
         //绑定上传事件
         self.$el.addEventListener("change", function() {
             if(!this.files.length) return;
-            var imageType = /image.*/;
-            this.files[0].type.match(imageType) ? sendFile(this.files[0], _callback) : alert("请上传图片")
+
+            var imageType = /image.*/,//限定上传类型
+                errorStack=[],//类型检测错误栈
+                fileList=Array.prototype.slice.call(this.files);//获取当前选择的图片
+
+            //上传操作
+            fileList.forEach(function(item){
+                item.type.match(imageType) ? sendFile(item,self.uploadUrl,_callback) : errorStack.push(item.name);
+            });
+
+            if(errorStack.length) alert(errorStack.join(",")+"不是有效的图片类型文件！");
         }, false);
 
         //生成表单元素
@@ -98,6 +108,11 @@
         this.$dataset.value = this.uploaded.join(",")
     }
 
+    //获取已上传图片路径
+    ImgUpload.prototype.getURLs=function(){
+        return this.uploaded;
+    }
+
     //simple selector
     function S(selector, parentsNode) {
         parentsNode ? parentsNode = parentsNode : parentsNode = document;
@@ -121,8 +136,9 @@
     }
 
     //发送文件至服务器
-    function sendFile(file, callback) {
-        var uri = S("#j-imguploadUrl")[0].value || "";
+    function sendFile(file,uri,callback) {
+        var $uri=S("#j-imguploadUrl");
+        var uri = $uri.length ? $uri[0].value : uri;
         var xhr = new XMLHttpRequest();
         var fd = new FormData();
 
