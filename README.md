@@ -35,8 +35,15 @@ seajs.use('/appadmin/js/router', function(router) {
 <input type="hidden" name="upload1" value="/imgupload/uploads/1.jpg,/imgupload/uploads/2.jpg,/imgupload/uploads/3.jpg">
 ```
 
-### 暴露的接口：
+### 手动实例化：
 ```
-var ele=document.querySelector("#inputfile");
-var imgupload=new ImgUpload(ele);
+var ip_upload1=document.querySelector("#j-upload1"),
+	uri="/imgupload/upload.php"; //上传接口
+
+var upload1=new ImgUpload(ip_upload1,uri);
+```
+getURLs()
+
+```
+upload1.getURLs()
 ```

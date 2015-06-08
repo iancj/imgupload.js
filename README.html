@@ -1040,7 +1040,12 @@ seajs.use('/appadmin/js/router', function(router) {
 <pre><code>//上传组件将会自动生成一个隐藏域用来放置已经上传的图片地址，多个地址用英文逗号隔开
 &lt;input type=&quot;hidden&quot; name=&quot;upload1&quot; value=&quot;/imgupload/uploads/1.jpg,/imgupload/uploads/2.jpg,/imgupload/uploads/3.jpg&quot;&gt;
 </code></pre></p>
-<h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>暴露的接口：</h3>
-<pre><code>var ele=document.querySelector(&quot;#inputfile&quot;);
-var imgupload=new ImgUpload(ele);
+<h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>手动实例化：</h3>
+<p><pre><code>var ip_upload1=document.querySelector(&quot;#j-upload1&quot;),
+    uri=&quot;/imgupload/upload.php&quot;; //上传接口
+
+var upload1=new ImgUpload(ip_upload1,uri);
+</code></pre><br />
+getURLs()</p>
+<pre><code>upload1.getURLs()
 </code></pre></article></body></html>
