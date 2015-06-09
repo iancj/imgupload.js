@@ -1015,37 +1015,92 @@ body .markdown-body
   }
 }
 </style><title>README</title></head><body><article class="markdown-body"><h1 id="imguploadjs"><a name="user-content-imguploadjs" href="#imguploadjs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>imgupload.js</h1>
-<p>图片上传组件</p>
-<h3 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>使用方法</h3>
-<pre><code>//引入样式文件
-&lt;link rel=&quot;stylesheet&quot; href=&quot;/appadmin/css/in/imgupload.css&quot;&gt;
+<p>图片异步上传组件</p>
+<h2 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>使用方法</h2>
+<h4 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>引入文件</h4>
+<pre><code class="js">&lt;link rel=&quot;stylesheet&quot; href=&quot;imgupload.css&quot;&gt;
+&lt;script src=&quot;imgupload.js&quot;&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code>&lt;script&gt;
-//使用router调用模块或者在模块中require
-seajs.use('/appadmin/js/router', function(router) {
-    router.load('in/imgupload');
+<h4 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>自动实例化</h4>
+<p><code>input[type=file]</code> 需要设置 <code>data-name</code> <code>class="j-imgupload"</code> ，将上传接口地址写入input[type=file]，id需要设置为 <code>id="j-imguploadUrl"</code> ，限制图片类型、限制图片尺寸请以<code>data-*=""</code>的形式传入</p>
+<pre><code class="html">&lt;section&gt;
+    &lt;input type=&quot;file&quot; data-name=&quot;upload2&quot; data-fileTypeExts=&quot;*.png|*.jpg&quot; data-imgSizeExts=&quot;320*640&quot; class=&quot;j-imgupload&quot;&gt; 
+    &lt;p&gt;请上传320*640的图片&lt;/p&gt;
+    &lt;input type=&quot;hidden&quot; id=&quot;j-imguploadUrl&quot; value=&quot;/imgupload/upload.php&quot;&gt;&lt;!-- 上传接口埋点 --&gt;
+&lt;/section&gt;
+</code></pre>
+
+<h4 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>手动实例化</h4>
+<pre><code class="html">&lt;section class=&quot;pdt20&quot;&gt;
+    &lt;input type=&quot;file&quot; data-name=&quot;upload1&quot; multiple id=&quot;j-upload1&quot;&gt;
+    &lt;p&gt;请上传宽度超过100px的图片&lt;/p&gt;
+    &lt;button id=&quot;btn-get1&quot;&gt;获取方法二已上传图片路径&lt;/button&gt;
+    &lt;p&gt;&lt;/p&gt;
+&lt;/section&gt;
+</code></pre>
+
+<pre><code class="js">&lt;script&gt;
+var upload1=new ImgUpload({
+    el:document.querySelector(&quot;#j-upload1&quot;),
+    uploadUrl:&quot;/imgupload/upload.php&quot;,
+    fileTypeExts:&quot;*.png|*.jpg|*.jpeg|*.gif&quot;,
+    imgSizeExts:&quot;100*&quot;
+});
+
+document.querySelector(&quot;#btn-get1&quot;).addEventListener(&quot;click&quot;,function(){
+    this.nextElementSibling.innerHTML=upload1.getURLs().join(&quot;,&quot;);
+},false);
+&lt;/script&gt;
+</code></pre>
+
+<h3 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>配置插件</h3>
+<p>每一个实例化的ImgUpload都可以单独配置参数，参数列表如下：</p>
+<h4 id="optionsel"><a name="user-content-optionsel" href="#optionsel" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>options.el</h4>
+<p>当前需要实例化的input[type=file]</p>
+<pre><code class="js">&lt;script&gt;
+var upload1=new ImgUpload({
+    el:document.querySelector(&quot;#j-upload1&quot;)
 });
 &lt;/script&gt;
 </code></pre>
 
-<p>配置图片上传接口：<br />
-<pre><code>&lt;input type=&quot;hidden&quot; id=&quot;j-imguploadUrl&quot; value=&quot;/imgupload/upload.php&quot;&gt;
-</code></pre></p>
-<p>自动实例化：<br />
-<pre><code>//元素name请以`data-name='*'`的方式设置，带上class=&quot;j-imgupload&quot;会自动实例化上传组件
-&lt;input type=&quot;file&quot; data-name=&quot;upload1&quot; class=&quot;j-imgupload&quot;&gt;
-</code></pre></p>
-<p>获得图片地址：<br />
-<pre><code>//上传组件将会自动生成一个隐藏域用来放置已经上传的图片地址，多个地址用英文逗号隔开
-&lt;input type=&quot;hidden&quot; name=&quot;upload1&quot; value=&quot;/imgupload/uploads/1.jpg,/imgupload/uploads/2.jpg,/imgupload/uploads/3.jpg&quot;&gt;
-</code></pre></p>
-<h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>手动实例化：</h3>
-<p><pre><code>var ip_upload1=document.querySelector(&quot;#j-upload1&quot;),
-    uri=&quot;/imgupload/upload.php&quot;; //上传接口
+<h4 id="optionsuploadurl"><a name="user-content-optionsuploadurl" href="#optionsuploadurl" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>options.uploadUrl</h4>
+<p>上传接口地址</p>
+<pre><code class="js">&lt;script&gt;
+var upload1=new ImgUpload({
+    uploadUrl:&quot;/imgupload/upload.php&quot;
+});
+&lt;/script&gt;
+</code></pre>
 
-var upload1=new ImgUpload(ip_upload1,uri);
-</code></pre><br />
-getURLs()</p>
-<pre><code>upload1.getURLs()
-</code></pre></article></body></html>
+<h4 id="optionsfiletypeexts"><a name="user-content-optionsfiletypeexts" href="#optionsfiletypeexts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>options.fileTypeExts`</h4>
+<p>限制上传文件类型</p>
+<pre><code class="js">&lt;script&gt;
+var upload1=new ImgUpload({
+    fileTypeExts:&quot;*.png|*.jpg|*.jpeg|*.gif&quot;
+});
+&lt;/script&gt;
+</code></pre>
+
+<h4 id="optionsimgsizeexts"><a name="user-content-optionsimgsizeexts" href="#optionsimgsizeexts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>options.imgSizeExts</h4>
+<p>限制上传文件尺寸，默认不限制。<code>100*</code> 代表限制宽度大于等于100px不限制高度，<code>*100</code> 代表限制高度大于等于100px不限制宽度，<code>100*100</code> 代表同时限制高度宽度为100px</p>
+<pre><code class="js">&lt;script&gt;
+var upload1=new ImgUpload({
+    imgSizeExts:&quot;100*&quot;
+});
+&lt;/script&gt;
+</code></pre>
+
+<h3 id="_6"><a name="user-content-_6" href="#_6" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>提供的方法</h3>
+<h4 id="geturls"><a name="user-content-geturls" href="#geturls" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>getURLs()</h4>
+<p>获取所有已上传图片路径</p>
+<pre><code class="js">&lt;script&gt;
+upload1.getURLs()
+&lt;/script&gt;
+</code></pre>
+
+<h3 id="_7"><a name="user-content-_7" href="#_7" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>你需要知道的</h3>
+<p>每当图片自动上传完成后，页面中始终会有一个隐藏域来保存你当前实例化上传组件的所有已上传成功的图片路径，例如：<br />
+<img src="///F://github/imgupload/exmaple1.png" alt=""><br />
+这时你可以直接通过form表单提交或者通过getURLs()方法获取路径，进行数据的提交或者处理。</p></article></body></html>

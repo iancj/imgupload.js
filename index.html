@@ -16,24 +16,28 @@
 <body>
 
 	<section>
+		<h1>方法一：自动实例化</h1>
+		<input type="file" data-name="upload2" data-fileTypeExts="*.png|*.jpg" data-imgSizeExts="320*640" class="j-imgupload"> 
+		<p>请上传320*640的图片</p>
+		<input type="hidden" id="j-imguploadUrl" value="/imgupload/upload.php"><!-- 上传接口埋点 -->
+	</section>
+
+	<section class="pdt20">
+		<h2>方法二：手动实例化</h2>
 		<input type="file" data-name="upload1" multiple id="j-upload1">
-		<button id="btn-get1">获取已上传图片路径</button>
+		<p>请上传宽度超过100px的图片</p>
+		<button id="btn-get1">获取方法二已上传图片路径</button>
 		<p></p>
 	</section>
-	
-	<!-- <section class="pdt20">
-		<input type="file" data-name="upload2" id="j-upload2">
-	</section> -->
-	
-	<!-- 上传路径埋点 -->
-	<!-- <input type="hidden" id="j-imguploadUrl" value="/imgupload/upload.php"> -->
 
 	<script src="imgupload.js"></script>
 	<script>
-	var ip_upload1=document.querySelector("#j-upload1"),
-		uri="/imgupload/upload.php";
-
-	var upload1=new ImgUpload(ip_upload1,uri);
+	var upload1=new ImgUpload({
+		el:document.querySelector("#j-upload1"),
+		uploadUrl:"/imgupload/upload.php",
+		fileTypeExts:"*.png|*.jpg|*.jpeg|*.gif",
+		imgSizeExts:"100*"
+	});
 
 	document.querySelector("#btn-get1").addEventListener("click",function(){
 		this.nextElementSibling.innerHTML=upload1.getURLs().join(",");

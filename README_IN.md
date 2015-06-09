@@ -5,11 +5,20 @@
 
 ## 使用方法
 
-#### 引入文件
+#### 引入样式文件
 
-```js
+```html
 <link rel="stylesheet" href="imgupload.css">
-<script src="imgupload.js"></script>
+```
+
+#### 调用
+```js
+<script>
+//使用router调用模块或者在模块中require
+seajs.use('/appadmin/js/router', function(router) {
+    router.load('in/imgupload');
+});
+</script>
 ```
 
 #### 自动实例化
