@@ -107,6 +107,29 @@
                 alert(msg.data.msg)
             }
         }
+
+        self.preload();//预加载
+    }
+
+    //预先加载页面上已存在的图片
+    ImgUpload.prototype.preload=function(){
+        var self=this,
+            $preloads=S(".j-uploadimg-preload"),
+            originName=self.$dataset.name;
+
+        if(!$preloads.length) return;
+        
+        Array.prototype.slice.call($preloads).forEach(function($pl){
+            if($pl.dataset.origin==originName){
+                Array.prototype.slice.call(S("img",$pl)).forEach(function($img){
+                    var path=$img.src,
+                        fullpath=$img.dataset.fullpath;
+
+                    self.addPreview(path,fullpath);
+                });
+                $pl.style.display="none";
+            }
+        });
     }
 
     // 检测图片大小

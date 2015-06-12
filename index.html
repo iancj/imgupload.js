@@ -17,7 +17,7 @@
 
 	<section>
 		<h1>方法一：自动实例化</h1>
-		<input type="file" data-name="upload2" data-fileTypeExts="*.png|*.jpg|*.jpeg" data-imgSizeExts="100*" data-uploadLimit="1" class="j-imgupload"> 
+		<input type="file" data-name="upload2" data-fileTypeExts="*.png|*.jpg|*.jpeg" data-imgSizeExts="100*" data-uploadLimit="999" class="j-imgupload"> 
 		<p>请上传320*640的图片</p>
 		<input type="hidden" id="j-imguploadUrl" value="/imgupload/upload.php"><!-- 上传接口埋点 -->
 	</section>
@@ -29,6 +29,12 @@
 		<button id="btn-get1">获取方法二已上传图片路径</button>
 		<p></p>
 	</section>
+
+	<!-- upload1的预加载 -->
+	<div class="j-uploadimg-preload" data-origin="upload1">
+		<img src="/imgupload/uploads/hoek.png" data-fullpath="/fullpath/imgupload/uploads/hoek.png">
+		<img src="/imgupload/uploads/hoek.png" data-fullpath="/fullpath/imgupload/uploads/hoek.png">
+	</div>
 
 	<script src="imgupload.js"></script>
 	<script>
