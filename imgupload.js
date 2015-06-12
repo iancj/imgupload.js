@@ -1,19 +1,20 @@
-;(function(window,document){
-    var defaultConf={
-        el:null,//input[type=file] dom
-        uploadUrl:"/", //上传接口
-        fileTypeExts:"image.*",//限制上传类型
-        imgSizeExts:""//限制上传尺寸
+;(function(window, document) {
+    var defaultConf = {
+        el: null, //input[type=file] dom
+        uploadUrl: "/", //上传接口
+        fileTypeExts: "image.*", //限制上传类型
+        imgSizeExts: "", //限制上传尺寸
+        uploadLimit:999 //限制上传文件数量
     }
 
     function ImgUpload(options) {
         //合并配置文件
-        this.config=extend(defaultConf,options);
+        this.config = extend(defaultConf, options);
 
         this.$el = this.config.el; //当前实例化的input[type=file] dom
         this.$preview = null; //预览容器dom
         this.$dataset = null; //已上传图片路径ipput[type=hidden] dom
-        this.$btn=null; //上传按钮
+        this.$btn = null; //上传按钮
         this.uploaded = []; //已上传图片路径
 
         //实例化后执行初始化
@@ -23,48 +24,50 @@
     //实例初始化
     ImgUpload.prototype.init = function() {
         var self = this,
-            errorStackTip=self.config.fileTypeExts.replace(/\|/g,",");//错误类型提示
+            errorStackTip = self.config.fileTypeExts.replace(/\|/g, ","); //错误类型提示
 
         //创建regexp对象
-        self.config.fileTypeExtsRegExp=self.config.fileTypeExts.toLowerCase().replace(/\*\./g,"");
+        self.config.fileTypeExtsRegExp = self.config.fileTypeExts.toLowerCase().replace(/\*\./g, "");
 
         // console.log(self.config)
 
         //绑定上传事件
         self.$el.addEventListener("change", function() {
-            if(!this.files.length) return;
+            if (!this.files.length) return;
 
-            var imageType = new RegExp(self.config.fileTypeExtsRegExp),//限定上传类型
-                errorStack=[],//类型检测错误栈
-                fileList=Array.prototype.slice.call(this.files,0);//获取当前选择的图片
+            var imageType = new RegExp(self.config.fileTypeExtsRegExp), //限定上传类型
+                errorStack = [], //类型检测错误栈
+                fileList = Array.prototype.slice.call(this.files, 0); //获取当前选择的图片
+
+            fileList=fileList.splice(0,self.config.uploadLimit);//限制上传数量
 
             //上传操作
-            fileList.forEach(function(item){
-                var itename=item.name;
+            fileList.forEach(function(item) {
+                var itename = item.name;
 
                 //检测图片类型
-                if(!item.type.match(imageType)){
-                    errorStack.push(itename+"不是有效的类型文件！\n");
+                if (!item.type.match(imageType)) {
+                    errorStack.push(itename + "不是有效的类型文件！\n");
                     return false;
                 }
 
                 //检测图片类型
-                self.checkSize(item,function(result){
-                    if(result){
-                        sendFile(item,self.config.uploadUrl,_callback);
-                    }
-                    else{
-                        alert(itename+"图片尺寸不匹配\n");
+                self.checkSize(item, function(result) {
+                    if (result) {
+                        sendFile(item, self.config.uploadUrl, _callback);
+                    } else {
+                        alert(itename + "图片尺寸不匹配\n");
                     }
                 });
 
             });
 
-            if(errorStack.length){
-                errorStack.push("请上传类型为"+errorStackTip+"的文件");
+            if (errorStack.length) {
+                errorStack.push("请上传类型为" + errorStackTip + "的文件");
                 alert(errorStack.join(""));
             }
 
+            self.$el.value = ""; //读取完所有file文件后清空，防止input自动cache
         }, false);
 
         //生成表单元素
@@ -77,20 +80,20 @@
         }
 
         //生成上传按钮
-        if(!self.$btn){
-            var $btn=Cele("div");
-            $btn.className="imgupload-btn";
-            $btn.innerHTML="上传图片";
-            self.$btn=$btn;
-            insertAfter(self.$btn,self.$el);
-            self.$el.style.display="none";
+        if (!self.$btn) {
+            var $btn = Cele("div");
+            $btn.className = "imgupload-btn";
+            $btn.innerHTML = "上传图片";
+            self.$btn = $btn;
+            insertAfter(self.$btn, self.$el);
+            self.$el.style.display = "none";
         }
 
         //上传按钮触发上传事件
-        self.$btn.addEventListener("click",function(e){
+        self.$btn.addEventListener("click", function(e) {
             self.$el.click();
             e.preventDefault();
-        },false);
+        }, false);
 
         //上传完成后的回调
         function _callback(res) {
@@ -98,27 +101,26 @@
             typeof res == "string" ? msg = JSON.parse(res) : msg = res;
 
             //上传成功添加缩略图
-            if (msg.succ){
-                self.addPreview(msg.data.path)
-            }
-            else{
+            if (msg.succ) {
+                self.addPreview(msg.data.path,msg.data.fullpath)
+            } else {
                 alert(msg.data.msg)
             }
         }
     }
 
     // 检测图片大小
-    ImgUpload.prototype.checkSize=function(file,callback){
-        var self=this;
+    ImgUpload.prototype.checkSize = function(file, callback) {
+        var self = this;
 
-        if(self.config.imgSizeExts=="" && callback){
+        if (self.config.imgSizeExts == "" && callback) {
             callback(true);
             return;
         }
 
         //设置图片文件
-        var $imgcheck=Cele("img");
-        $imgcheck.file=file;
+        var $imgcheck = Cele("img");
+        $imgcheck.file = file;
 
         //渲染图片
         var reader = new FileReader();
@@ -130,33 +132,32 @@
         reader.readAsDataURL(file);
 
         //获取图片大小
-        $imgcheck.onload=function(){
-            var result=true,
-                w=$imgcheck.width,//选择的图片高宽
-                h=$imgcheck.height,
-                imgSizeExts=self.config.imgSizeExts,
-                ptnW=parseInt(imgSizeExts.split("*")[0]),//配置参数中的高宽
-                ptnH=parseInt(imgSizeExts.split("*")[1]);
+        $imgcheck.onload = function() {
+            var result = true,
+                w = $imgcheck.width, //选择的图片高宽
+                h = $imgcheck.height,
+                imgSizeExts = self.config.imgSizeExts,
+                ptnW = parseInt(imgSizeExts.split("*")[0]), //配置参数中的高宽
+                ptnH = parseInt(imgSizeExts.split("*")[1]);
 
-            if(typeof ptnW == "number" && isNaN(ptnH)){
-                if(w<ptnW) result=false;
+            if (typeof ptnW == "number" && isNaN(ptnH)) {
+                if (w < ptnW) result = false;
+            } else if (isNaN(ptnW) && typeof ptnH == "number") {
+                if (h < ptnH) result = false;
+            } else if (typeof ptnW == "number" && typeof ptnH == "number") {
+                if (w < ptnW || h < ptnH) result = false;
             }
-            else if(isNaN(ptnW) && typeof ptnH == "number"){
-                if(h<ptnH) result=false;
-            }
-            else if(typeof ptnW == "number" && typeof ptnH == "number"){
-                if(w<ptnW || h<ptnH) result=false;
-            }
-            
-            if(callback) callback(result);
+
+            if (callback) callback(result);
         }
     }
 
     /*
      * 添加缩略图
-     * @param imgurl 图片路径
-    */
-    ImgUpload.prototype.addPreview = function(imgurl) {
+     * @param path 缩略图显示的路径
+     * @param fullpath 后端保存的路径
+     */
+    ImgUpload.prototype.addPreview = function(path,fullpath) {
         var self = this;
 
         //如果是第一张缩略图增创建container panel
@@ -166,44 +167,68 @@
             self.$preview = $ul;
 
             //删除操作
-            $ul.addEventListener("click",function(e){
-                var nodeListArr=Array.prototype.slice.call(S("li",$ul),0),
-                    targetEle=e.target;
+            $ul.addEventListener("click", function(e) {
+                var nodeListArr = Array.prototype.slice.call(S("li", $ul), 0),
+                    targetEle = e.target;
 
-                nodeListArr.forEach(function(item,index){
-                    if(targetEle==item){
+                nodeListArr.forEach(function(item, index) {
+                    if (targetEle == item) {
                         $ul.removeChild(item);
-                        self.uploaded.splice(index,1);
+                        self.uploaded.splice(index, 1);
                         self.updateDataset();
                     }
                 });
-            },false)
+            }, false)
 
             insertAfter(self.$preview, self.$el.nextSibling)
         }
 
-        //增加预览图
-        var $img = Cele("img"),
-            $li = Cele("li");
+        //如果限制1张执行替换操作
+        if(self.config.uploadLimit==1){
+            if(!S("li",self.$preview).length){
+                // 增加预览图
+                var $img = Cele("img"),
+                    $li = Cele("li");
 
-        $img.src = imgurl;
-        $li.appendChild($img);
+                $img.src = path;
+                $li.appendChild($img);
 
-        self.$preview.appendChild($li);
+                self.$preview.appendChild($li);
+            }
 
-        //增加图片url到需要上传的表单元素中
-        self.uploaded.push(imgurl);
+            S("li img",self.$preview)[0].src=path;
+
+            //只保存一张图片
+            self.uploaded[0]=fullpath;
+        }
+        else if(self.config.uploadLimit>1 && self.uploaded.length>=self.config.uploadLimit){
+            alert("您最多可以上传"+self.config.uploadLimit+"张图片!");
+        }
+        else{
+            //增加预览图
+            var $img = Cele("img"),
+                $li = Cele("li");
+
+            $img.src = path;
+            $li.appendChild($img);
+
+            self.$preview.appendChild($li);
+
+            //增加图片url到需要上传的表单元素中
+            self.uploaded.push(fullpath);
+        }
+
         //更新需要上传的表单元素的url值
         self.updateDataset();
     }
 
     //更新需要上传的表单元素的url值
-    ImgUpload.prototype.updateDataset=function(){
+    ImgUpload.prototype.updateDataset = function() {
         this.$dataset.value = this.uploaded.join(",")
     }
 
     //获取已上传图片路径
-    ImgUpload.prototype.getURLs=function(){
+    ImgUpload.prototype.getURLs = function() {
         return this.uploaded;
     }
 
@@ -260,7 +285,7 @@
     }
 
     //发送文件至服务器
-    function sendFile(file,uri,callback) {
+    function sendFile(file, uri, callback) {
         var xhr = new XMLHttpRequest();
         var fd = new FormData();
 
@@ -272,32 +297,33 @@
             }
         };
 
-        fd.append('myFile', file);
+        fd.append('Filedata', file);
         xhr.send(fd);
     }
 
     //自动实例化
-    (function(){
+    (function() {
         var $uploads = S(".j-imgupload"),
-            uploadUrl = S("#j-imguploadUrl").value || "/";
+            uploadUrl = S("#j-imguploadUrl")[0].value || "/";
 
         for (var i = 0, len = $uploads.length; i < len; i++) {
-            var $ip=$uploads[i],
-                dataset=$ip.dataset;
+            var $ip = $uploads[i],
+                dataset = $ip.dataset;
 
             new ImgUpload({
-                el:$ip,
-                uploadUrl:uploadUrl,
-                fileTypeExts:dataset.filetypeexts,
-                imgSizeExts:dataset.imgsizeexts
+                el: $ip,
+                uploadUrl: uploadUrl,
+                fileTypeExts: dataset.filetypeexts || "image.*",
+                imgSizeExts: dataset.imgsizeexts || "",
+                uploadLimit: dataset.uploadlimit || 999
             });
         }
     })();
 
     // CommonJS
-    if ( typeof module === "object" && typeof module.exports === "object" ) {
+    if (typeof module === "object" && typeof module.exports === "object") {
         module.exports = ImgUpload;
     } else {
         window.ImgUpload = ImgUpload;
     }
-})(window,document);
+})(window, document);

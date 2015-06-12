@@ -102,6 +102,18 @@ var upload1=new ImgUpload({
 </script>
 ```
 
+#### options.uploadLimit
+
+限制上传文件数量，默认为999。
+
+```js
+<script>
+var upload1=new ImgUpload({
+	uploadLimit:1
+});
+</script>
+```
+
 ### 提供的方法
 
 #### getURLs()
