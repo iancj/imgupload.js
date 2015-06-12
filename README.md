@@ -126,6 +126,17 @@ upload1.getURLs()
 </script>
 ```
 
+#### 设置已存在的图片资源
+
+或许你会需要在编辑页面对已上传的一些图片进行管理，那么你可以通过dom埋点方式进行预加载处理。请注意，你的 `data-origin`值需要与input的name值相同，这样它们才会自动匹配在一起并完成预加载处理。
+
+```html
+<div class="j-uploadimg-preload" data-origin="upload1">
+	<img src="/imgupload/uploads/hoek.png" data-fullpath="/fullpath/imgupload/uploads/hoek.png">
+	<img src="/imgupload/uploads/abc.png" data-fullpath="/fullpath/imgupload/uploads/abc.png">
+</div>
+```
+
 ### 你需要知道的
 每当图片自动上传完成后，页面中始终会有一个隐藏域来保存你当前实例化上传组件的所有已上传成功的图片路径，例如：
 <img src="exmaple1.png" alt="">

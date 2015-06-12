@@ -1109,7 +1109,15 @@ upload1.getURLs()
 &lt;/script&gt;
 </code></pre>
 
-<h3 id="_7"><a name="user-content-_7" href="#_7" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>你需要知道的</h3>
+<h4 id="_7"><a name="user-content-_7" href="#_7" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>设置已存在的图片资源</h4>
+<p>或许你会需要在编辑页面对已上传的一些图片进行管理，那么你可以通过dom埋点方式进行预加载处理。请注意，你的 <code>data-origin</code>值需要与input的name值相同，这样它们才会自动匹配在一起并完成预加载处理。</p>
+<pre><code class="html">&lt;div class=&quot;j-uploadimg-preload&quot; data-origin=&quot;upload1&quot;&gt;
+    &lt;img src=&quot;/imgupload/uploads/hoek.png&quot; data-fullpath=&quot;/fullpath/imgupload/uploads/hoek.png&quot;&gt;
+    &lt;img src=&quot;/imgupload/uploads/abc.png&quot; data-fullpath=&quot;/fullpath/imgupload/uploads/abc.png&quot;&gt;
+&lt;/div&gt;
+</code></pre>
+
+<h3 id="_8"><a name="user-content-_8" href="#_8" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>你需要知道的</h3>
 <p>每当图片自动上传完成后，页面中始终会有一个隐藏域来保存你当前实例化上传组件的所有已上传成功的图片路径，例如：<br />
 <img src="///F://github/imgupload/exmaple1.png" alt=""><br />
 这时你可以直接通过form表单提交或者通过getURLs()方法获取路径，进行数据的提交或者处理。</p></article></body></html>
