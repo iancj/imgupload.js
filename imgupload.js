@@ -324,10 +324,20 @@
         xhr.send(fd);
     }
 
-    //自动实例化
-    (function() {
+    window.addEventListener("load",function(){
+        //自动实例化
         var $uploads = S(".j-imgupload"),
-            uploadUrl = S("#j-imguploadUrl")[0].value || "/";
+            $uploadUrl = S("#j-imguploadUrl");
+
+        if(!$uploads.length){
+            return console.error("can not found dom of image upload input elements");
+        }
+
+        if(!$uploadUrl.length){
+            return console.error("can not found dom of upload uri input element");
+        }
+
+        var uploadUrl = S("#j-imguploadUrl")[0].value || "/";
 
         for (var i = 0, len = $uploads.length; i < len; i++) {
             var $ip = $uploads[i],
@@ -341,7 +351,7 @@
                 uploadLimit: dataset.uploadlimit || 999
             });
         }
-    })();
+    },false);
 
     // CommonJS
     if (typeof module === "object" && typeof module.exports === "object") {
